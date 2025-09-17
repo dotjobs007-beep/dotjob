@@ -46,51 +46,97 @@ export default class JobService {
     return;
   }
 
-async getAllJob(req: Request) {
-  const { userId } = req;
-  if (!userId) throw new AppError("account not found", 401);
+  async getAllJob(req: Request) {
+    const { userId } = req;
+    if (!userId) throw new AppError("account not found", 401);
 
-  const user = await this.userRepo.findById(userId);
-  if (!user) throw new AppError("account not found", 401);
+    const user = await this.userRepo.findById(userId);
+    if (!user) throw new AppError("account not found", 401);
 
-  // Extract filters from query
-  const {
-    minSalary,
-    maxSalary,
-    location,
-    companyName,
-    title,
-    employmentType,
-    workArrangement,
-    startDate,
-    endDate,
-    page,
-    limit,
-    sortBy,
-    sortOrder,
-  } = req.query;
+    // Extract filters from query
+    const {
+      minSalary,
+      maxSalary,
+      location,
+      companyName,
+      title,
+      employmentType,
+      workArrangement,
+      startDate,
+      endDate,
+      page,
+      limit,
+      sortBy,
+    } = req.query;
 
-  // Build filter object, converting types where necessary
-  const filters: IJobFilters = {
-    minSalary: minSalary ? Number(minSalary) : undefined,
-    maxSalary: maxSalary ? Number(maxSalary) : undefined,
-    location: location as string | undefined,
-    companyName: companyName as string | undefined,
-    title: title as string | undefined,
-    employmentType: employmentType as string | undefined,
-    workArrangement: workArrangement as string | undefined,
-    startDate: startDate ? new Date(startDate as string) : undefined,
-    endDate: endDate ? new Date(endDate as string) : undefined,
-    page: page ? Number(page) : 1,
-    limit: limit ? Number(limit) : 10,
-    sortBy: (sortBy as string) || "createdAt",
-  };
+    // Build filter object, converting types where necessary
+    const filters: IJobFilters = {
+      minSalary: minSalary ? Number(minSalary) : undefined,
+      maxSalary: maxSalary ? Number(maxSalary) : undefined,
+      location: location as string | undefined,
+      companyName: companyName as string | undefined,
+      title: title as string | undefined,
+      employmentType: employmentType as string | undefined,
+      workArrangement: workArrangement as string | undefined,
+      startDate: startDate ? new Date(startDate as string) : undefined,
+      endDate: endDate ? new Date(endDate as string) : undefined,
+      page: page ? Number(page) : 1,
+      limit: limit ? Number(limit) : 10,
+      sortBy: (sortBy as string) || "createdAt",
+    };
 
-  // Pass filters to repo
-  const job = await this.jobRepo.getAllJobs(filters);
-  if (!job) throw new AppError("oops! something went wrong, please try again", 500);
+    // Pass filters to repo
+    const jobs = await this.jobRepo.getAllJobs(filters);
+    if (!jobs)
+      throw new AppError("oops! something went wrong, please try again", 500);
 
-  return job;
-}
+    return jobs;
+  }
 
+  async getJobById(req: Request) {
+    const { userId } = req;
+    const { jobId } = req.params;
+    if (!userId) throw new AppError("account not found", 401);
+
+    const user = await this.userRepo.findById(userId);
+    if (!user) throw new AppError("account not found", 401);
+    if (!jobId) throw new AppError("job id is required", 500);
+
+    const job = await this.jobRepo.getJobById(jobId);
+    return job;
+  }
+
+  async getUserJobs(req: Request) {
+    const { userId } = req;
+    if (!userId) throw new AppError("account not found", 401);
+    const { page, limit, sortBy } = req.query;
+    const user = await this.userRepo.findById(userId);
+    if (!user) throw new AppError("account not found", 401);
+    const pageInt = page ? Number(page) : 1;
+    const limitInt = limit ? Number(limit) : 10;
+    const sortByFormatted = (sortBy as string) || "createdAt";
+    const sortOrderFormatted = "desc";
+    const job = await this.jobRepo.getJobsByUser(
+      userId,
+      pageInt,
+      limitInt,
+      sortByFormatted,
+      sortOrderFormatted
+    );
+    return job;
+  }
+
+  async updateJob(req: Request) {
+    const { userId } = req;
+    if (!userId) throw new AppError("account not found", 401);
+    const user = await this.userRepo.findById(userId);
+    if (!user) throw new AppError("account not found", 401);
+    const { jobId } = req.params;
+    if (!jobId) throw new AppError("job id is required", 500);
+    const body: IJob = req.body;
+    const update = await this.jobRepo.updateJob(jobId, userId, body);
+    if (!update)
+      throw new AppError("oops! something went wrong, please try again", 500);
+    return;
+  }
 }

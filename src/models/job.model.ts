@@ -1,5 +1,8 @@
 import mongoose, { Document, Schema } from "mongoose";
 
+/* ===========================
+   Job Model
+=========================== */
 export interface IJob extends Document {
   _id: string;
   creatorId: mongoose.Types.ObjectId;
@@ -18,34 +21,67 @@ export interface IJob extends Document {
   company_website: string;
   company_description: string;
   company_location: string;
-  is_active: boolean
+  is_active: boolean;
 }
 
 const jobSchema = new Schema<IJob>(
   {
     title: { type: String, required: true },
-
-    // Foreign key reference to User collection
     creatorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-
     description: { type: String, required: true },
     position: { type: String, required: true },
-    employment_type: { type: String, required: true }, // e.g. "full-time"
-    work_arrangement: { type: String, required: true }, // e.g. "remote"
-    salary_type: { type: String, required: true }, // e.g. "monthly"
+    employment_type: { type: String, required: true },
+    work_arrangement: { type: String, required: true },
+    salary_type: { type: String, required: true },
     salary_range: {
-      min: { type: Number, required: false },
-      max: { type: Number, required: false },
+      min: { type: Number },
+      max: { type: Number },
     },
     company_name: { type: String, required: true },
-    company_website: { type: String, required: false },
-    company_description: { type: String, required: false },
+    company_website: { type: String },
+    company_description: { type: String },
     company_location: { type: String, required: true },
-    logo: {type: String, default: ""},
+    logo: { type: String, default: "" },
     is_active: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
 
+export const Job = mongoose.model<IJob>("Job", jobSchema);
 
-export default mongoose.model<IJob>("Job", jobSchema);
+/* ===========================
+   Job Application Model
+=========================== */
+export interface IJobApplication extends Document {
+  _id: string;
+  jobId: mongoose.Types.ObjectId;   
+  applicantId: mongoose.Types.ObjectId; 
+  resume: string;
+  linkedInProfile: string;                    
+  coverLetter?: string;
+  xProfile: string;
+  status: "pending" | "reviewed" | "accepted" | "rejected";
+  appliedAt: Date;
+}
+
+const jobApplicationSchema = new Schema<IJobApplication>(
+  {
+    jobId: { type: Schema.Types.ObjectId, ref: "Job", required: true },
+    applicantId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    resume: { type: String, required: true },
+    linkedInProfile: {type: String, default: ""},
+    xProfile: {type: String, default: ""},
+    status: {
+      type: String,
+      enum: ["pending", "reviewed", "accepted", "rejected"],
+      default: "pending",
+    },
+    appliedAt: { type: Date, default: Date.now },
+  },
+  { timestamps: true }
+);
+
+export const JobApplication = mongoose.model<IJobApplication>(
+  "JobApplication",
+  jobApplicationSchema
+);

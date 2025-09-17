@@ -1,5 +1,5 @@
 // src/repositories/job.repository.ts
-import Job, { IJob } from "../models/job.model";
+import  { IJob, Job, JobApplication, IJobApplication } from "../models/job.model";
 import { IJobFilters, IJobsDetails } from "../interface/job.interface";
 
 export default class JobRepository {
@@ -66,8 +66,8 @@ export default class JobRepository {
   }
 
   // Update a job by ID
-  async updateJob(id: string, updateData: Partial<IJob>): Promise<IJob | null> {
-    return Job.findByIdAndUpdate(id, updateData, { new: true });
+  async updateJob(id: string, creatorId:string, updateData: Partial<IJob>): Promise<IJob | null> {
+    return Job.findByIdAndUpdate({_id:id, creatorId:creatorId}, updateData, { new: true });
   }
 
   // Deactivate a job (set is_active to false)
