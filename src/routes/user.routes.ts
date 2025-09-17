@@ -2,8 +2,7 @@ import { Router } from "express";
 import UserController from "../controllers/user.controller";
 import {firebaseAuth} from "../middlewares/firebase.middleware"
 import { validateSecret } from "../middlewares/validate_secret.middleware";
-import { validateAuthorization } from "../utils/tokenGenerator";
-import { validateBody } from "../middlewares/validator";
+import { validateAuthorization, validateBody } from "../middlewares/validator";
 import { updateSchema } from "../schema/user";
 const router = Router();
 const userController = new UserController();

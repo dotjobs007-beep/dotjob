@@ -7,6 +7,7 @@ import connectDB from "./config/database";
 import { errorHandler } from "./middlewares/errorHandler";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.routes";
+import jobRoutes from "./routes/job.routes"
 import { validateSecret } from "./middlewares/validate_secret.middleware";
 
 
@@ -34,6 +35,7 @@ app.get("/health", (req, res) => {
 
 // Routes
 app.use("/api/user", validateSecret, userRoutes);
+app.use("/api/job", validateSecret, jobRoutes);
 
 app.use(errorHandler);
 

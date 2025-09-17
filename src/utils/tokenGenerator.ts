@@ -1,4 +1,4 @@
-import { NextFunction, Response, Request } from "express";
+import {Response} from "express";
 import jwt, { Secret, SignOptions, JwtPayload } from "jsonwebtoken";
 
 export interface TokenPayload {
@@ -27,36 +27,15 @@ export function generateToken(
     sameSite: "strict",
     maxAge:
       typeof expiresIn === "string"
-        ? 7 * 24 * 60 * 60 * 1000 
+        ? 7 * 24 * 60 * 60 * 1000
         : expiresIn * 1000,
   });
 
   return token;
 }
 
-
-interface DecodedToken extends JwtPayload {
+export interface DecodedToken extends JwtPayload {
   id: string;
   role?: string;
 }
 
-export function validateAuthorization(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies?.token;
-  console.log(token)
-  if (!token) {
-    return res.status(401).json({ error: "error", message: "No token found", code: 401 });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
-
-    if (decoded.exp && decoded.exp * 1000 < Date.now()) {
-      return res.status(401).json({ error: "error", message: "Token expired", code: 401 });
-    }
-    req.userId = decoded.id;
-
-    return next();
-  } catch (err) {
-    return res.status(401).json({ error: "error", message: "Invalid or expired token", code: 401 });
-  }
-}
