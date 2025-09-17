@@ -14,4 +14,10 @@ export default class JobController {
     await this.jobService.postJob(req);
     return sendResponse(res, 200, "job created successful");
   });
+
+  getJob = asyncHandler(async (req: Request, res: Response) => {
+  const jobs = await this.jobService.getAllJob(req);
+    return sendResponse(res, 200, "job fetched successful", jobs);
+  });
+
 }

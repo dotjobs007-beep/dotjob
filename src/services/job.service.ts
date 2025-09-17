@@ -4,6 +4,7 @@ import JobRepository from "../repositories/job.repo";
 import UserRepository from "../repositories/user.repo";
 import { IJob } from "../models/job.model";
 import mongoose from "mongoose";
+import { IJobFilters } from "../interface/job.interface";
 
 export default class JobService {
   private jobRepo: JobRepository;
@@ -44,4 +45,52 @@ export default class JobService {
       throw new AppError("oops! something went wrong, please try again", 500);
     return;
   }
+
+async getAllJob(req: Request) {
+  const { userId } = req;
+  if (!userId) throw new AppError("account not found", 401);
+
+  const user = await this.userRepo.findById(userId);
+  if (!user) throw new AppError("account not found", 401);
+
+  // Extract filters from query
+  const {
+    minSalary,
+    maxSalary,
+    location,
+    companyName,
+    title,
+    employmentType,
+    workArrangement,
+    startDate,
+    endDate,
+    page,
+    limit,
+    sortBy,
+    sortOrder,
+  } = req.query;
+
+  // Build filter object, converting types where necessary
+  const filters: IJobFilters = {
+    minSalary: minSalary ? Number(minSalary) : undefined,
+    maxSalary: maxSalary ? Number(maxSalary) : undefined,
+    location: location as string | undefined,
+    companyName: companyName as string | undefined,
+    title: title as string | undefined,
+    employmentType: employmentType as string | undefined,
+    workArrangement: workArrangement as string | undefined,
+    startDate: startDate ? new Date(startDate as string) : undefined,
+    endDate: endDate ? new Date(endDate as string) : undefined,
+    page: page ? Number(page) : 1,
+    limit: limit ? Number(limit) : 10,
+    sortBy: (sortBy as string) || "createdAt",
+  };
+
+  // Pass filters to repo
+  const job = await this.jobRepo.getAllJobs(filters);
+  if (!job) throw new AppError("oops! something went wrong, please try again", 500);
+
+  return job;
+}
+
 }
