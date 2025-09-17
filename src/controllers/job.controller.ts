@@ -25,14 +25,28 @@ export default class JobController {
     return sendResponse(res, 200, "job fetched successful", job);
   });
 
-  
   getUserJob = asyncHandler(async (req: Request, res: Response) => {
     const jobs = await this.jobService.getUserJobs(req);
     return sendResponse(res, 200, "job fetched successful", jobs);
   });
 
   updateJob = asyncHandler(async (req: Request, res: Response) => {
-    const jobs = await this.jobService.updateJob(req);
+    await this.jobService.updateJob(req);
     return sendResponse(res, 200, "job updated successful");
+  });
+
+  applyForJob = asyncHandler(async (req: Request, res: Response) => {
+    await this.jobService.applyForJob(req);
+    return sendResponse(res, 200, "job applied successful");
+  });
+
+  getApplicationsForJob = asyncHandler(async (req: Request, res: Response) => {
+    const jobs = await this.jobService.getApplicationsForJob(req);
+    return sendResponse(res, 200, "job applications fetched successful", jobs);
+  });
+
+  updateApplicationStatus = asyncHandler(async (req: Request, res: Response) => {
+    await this.jobService.getApplicationsForJob(req);
+    return sendResponse(res, 200, "job applications updated successful");
   });
 }

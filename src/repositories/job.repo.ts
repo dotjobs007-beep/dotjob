@@ -105,4 +105,74 @@ export default class JobRepository {
   };
 }
 
+
+// Apply for a job
+  async applyForJob(data: Partial<IJobApplication>): Promise<IJobApplication> {
+    const application = new JobApplication(data);
+    return application.save();
+  }
+
+  // Get all applications for a specific job (paginated)
+  async getApplicationsByJobId(
+    jobId: string,
+    page = 1,
+    limit = 10,
+    sortBy = "createdAt",
+    sortOrder: "asc" | "desc"
+  ): Promise<{
+    data: IJobApplication[];
+    pagination: {
+      totalApplications: number;
+      totalPages: number;
+      currentPage: number;
+      pageSize: number;
+    };
+  }> {
+    const query = { jobId };
+
+    const skip = (page - 1) * limit;
+    const sortOptions: any = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+
+    const applications = await JobApplication.find(query)
+      .populate("applicantId", "name email skill about avatar address verified_onchain address")
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limit);
+
+    const totalApplications = await JobApplication.countDocuments(query);
+    const totalPages = Math.ceil(totalApplications / limit);
+
+    return {
+      data: applications,
+      pagination: {
+        totalApplications,
+        totalPages,
+        currentPage: page,
+        pageSize: limit,
+      },
+    };
+  }
+
+  // Update application status (accept/reject/reviewed)
+  async updateApplicationStatus(
+    applicationId: string,
+    status: "pending" | "reviewed" | "accepted" | "rejected"
+  ): Promise<IJobApplication | null> {
+    return JobApplication.findByIdAndUpdate(
+      applicationId,
+      { status },
+      { new: true }
+    );
+  }
+  // Get all applications for a specific job (paginated)
+  async getApplicationByUserId(
+    jobId: string,
+    userId: string
+  ): Promise<IJobApplication | null> {
+    const applicant = await JobApplication.findOne({jobId: jobId, applicantId: userId})
+    
+    return applicant
+  }
 }
+
+

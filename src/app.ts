@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.routes";
 import jobRoutes from "./routes/job.routes"
 import { validateSecret } from "./middlewares/validate_secret.middleware";
+import { validateAuthorization } from "./middlewares/validator";
 
 
 dotenv.config();
@@ -35,7 +36,7 @@ app.get("/health", (req, res) => {
 
 // Routes
 app.use("/api/user", validateSecret, userRoutes);
-app.use("/api/job", validateSecret, jobRoutes);
+app.use("/api/job", validateSecret, validateAuthorization, jobRoutes);
 
 app.use(errorHandler);
 

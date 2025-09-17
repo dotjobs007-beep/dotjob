@@ -139,4 +139,80 @@ export default class JobService {
       throw new AppError("oops! something went wrong, please try again", 500);
     return;
   }
+
+  async applyForJob(req: Request) {
+    const { userId } = req;
+    if (!userId) throw new AppError("account not found", 401);
+
+    const { jobId, resume, linkedInProfile, xProfile, coverLetter } = req.body;
+
+    // Ensure job exists
+    const job = await this.jobRepo.getJobById(jobId);
+    if (!job || !job.is_active) throw new AppError("job not available", 404);
+
+    const alreadyApplied = await this.jobRepo.getApplicationByUserId(
+      jobId,
+      userId
+    );
+    if (alreadyApplied)
+      throw new AppError("can't re-apply for this job", 500);
+
+    const application = await this.jobRepo.applyForJob({
+      jobId,
+      applicantId: new mongoose.Types.ObjectId(userId),
+      resume,
+      linkedInProfile,
+      xProfile,
+      coverLetter,
+    });
+
+    return application;
+  }
+
+  // Get applications for a job
+  async getApplicationsForJob(req: Request) {
+    const { userId } = req;
+    if (!userId) throw new AppError("account not found", 401);
+
+    const { jobId } = req.params;
+    const { page = 1, limit = 10, sortBy, sortOrder } = req.query;
+
+    // Ensure job exists
+    const job = await this.jobRepo.getJobById(jobId);
+    if (!job) throw new AppError("job not found", 404);
+
+    // Only creator can fetch applications
+    if (job.creatorId.toString() !== userId.toString()) {
+      throw new AppError("not authorized", 403);
+    }
+
+    return this.jobRepo.getApplicationsByJobId(
+      jobId,
+      Number(page),
+      Number(limit),
+      (sortBy as string) || "createdAt",
+      (sortOrder as "asc" | "desc") || "desc"
+    );
+  }
+
+  // Update application status
+  async updateApplicationStatus(req: Request) {
+    const { userId } = req;
+    if (!userId) throw new AppError("account not found", 401);
+
+    const { applicationId } = req.params;
+    const { status } = req.body;
+
+    if (!["pending", "reviewed", "accepted", "rejected"].includes(status)) {
+      throw new AppError("invalid status value", 400);
+    }
+
+    const updated = await this.jobRepo.updateApplicationStatus(
+      applicationId,
+      status
+    );
+    if (!updated) throw new AppError("application not found", 404);
+
+    return updated;
+  }
 }
