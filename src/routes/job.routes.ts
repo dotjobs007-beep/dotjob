@@ -29,4 +29,11 @@ router.patch(
   validateBody(jobApplicationSchema),
   jobController.updateApplicationStatus
 );
+
+
+router.post(
+  "/upload-resume",
+  jobController.uploadResume
+);
+
 export default router;

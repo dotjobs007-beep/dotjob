@@ -49,4 +49,9 @@ export default class JobController {
     await this.jobService.getApplicationsForJob(req);
     return sendResponse(res, 200, "job applications updated successful");
   });
+
+    uploadResume = asyncHandler(async (req: Request, res: Response) => {
+    await this.jobService.uploadResume(req);
+    return sendResponse(res, 200, "resume uploaded successfully");
+  });
 }

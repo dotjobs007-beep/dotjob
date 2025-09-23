@@ -36,7 +36,7 @@ app.get("/health", (req, res) => {
 
 // Routes
 app.use("/api/user", validateSecret, userRoutes);
-app.use("/api/job", validateSecret, validateAuthorization, jobRoutes);
+app.use("/api/job", validateSecret, jobRoutes);
 
 app.use(errorHandler);
 

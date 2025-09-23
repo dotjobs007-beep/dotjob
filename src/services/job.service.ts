@@ -5,6 +5,19 @@ import UserRepository from "../repositories/user.repo";
 import { IJob } from "../models/job.model";
 import mongoose from "mongoose";
 import { IJobFilters } from "../interface/job.interface";
+import formidable, { File } from "formidable";
+import fs from "fs";
+// import { cloud } from "../config/cloudinary";
+import { v2 as cloudinary } from "cloudinary";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export default class JobService {
   private jobRepo: JobRepository;
@@ -14,6 +27,7 @@ export default class JobService {
     this.jobRepo = new JobRepository();
     this.userRepo = new UserRepository();
   }
+  
 
   async postJob(req: Request) {
     const { userId } = req;
@@ -154,8 +168,7 @@ export default class JobService {
       jobId,
       userId
     );
-    if (alreadyApplied)
-      throw new AppError("can't re-apply for this job", 500);
+    if (alreadyApplied) throw new AppError("can't re-apply for this job", 500);
 
     const application = await this.jobRepo.applyForJob({
       jobId,
@@ -214,5 +227,50 @@ export default class JobService {
     if (!updated) throw new AppError("application not found", 404);
 
     return updated;
+  }
+
+  async uploadResume(req: Request): Promise<string> {
+    // Create a new formidable form
+    const form = formidable({ multiples: false });
+
+    try {
+      const { files } = await new Promise<{ files: formidable.Files }>((resolve, reject) => {
+        form.parse(req, (err, fields, files) => {
+          if (err) return reject(err);
+          resolve({ files });
+        });
+      });
+
+      // Ensure a file exists
+      if (!files.file) {
+        throw new AppError("No file uploaded", 400);
+      }
+
+      // Narrow type to a single file
+      const file = Array.isArray(files.file) ? files.file[0] : (files.file as formidable.File);
+
+      if (!file.filepath || !file.originalFilename) {
+        throw new AppError("Invalid file", 400);
+      }
+
+      // Upload to Cloudinary
+      const uploadResult = await cloudinary.uploader.upload(file.filepath, {
+        folder: "resumes",   
+        resource_type: "auto", 
+        use_filename: true,
+        unique_filename: false,
+      });
+
+      // Remove temp file
+      fs.unlink(file.filepath, (err) => {
+        if (err) console.warn("Failed to delete temp file:", err);
+      });
+
+      console.log("user uploaded resume to Cloudinary:", uploadResult.secure_url);
+      return uploadResult.secure_url;
+
+    } catch (error: any) {
+      throw new AppError(error.message || "Failed to upload resume", 500);
+    }
   }
 }
