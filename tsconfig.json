@@ -8,9 +8,9 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-
-    "experimentalDecorators": true,   // ✅ enable decorators
-    "emitDecoratorMetadata": true     // ✅ needed for class-validator
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
