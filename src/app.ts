@@ -10,6 +10,7 @@ import userRoutes from "./routes/user.routes";
 import jobRoutes from "./routes/job.routes"
 import { validateSecret } from "./middlewares/validate_secret.middleware";
 import { validateAuthorization } from "./middlewares/validator";
+import { sendResponse } from "./utils/responseHandler";
 
 
 dotenv.config();
@@ -39,5 +40,11 @@ app.use("/api/user", validateSecret, userRoutes);
 app.use("/api/job", validateSecret, jobRoutes);
 
 app.use(errorHandler);
+
+app.use((req, res, next) => {
+  console.log("404 handler reached for:", req.originalUrl);
+  return sendResponse(res, 404, "route not found");
+});
+
 
 export default app;
