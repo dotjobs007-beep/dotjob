@@ -51,4 +51,9 @@ export default class UserController {
     await this.userService.connectWallet(req);
     return sendResponse(res, 200, "wallet connect successful");
   });
+
+    logout = asyncHandler(async (req: Request, res: Response) => {
+    await this.userService.logout(res);
+    return sendResponse(res, 200, "logout successful");
+  });
 }

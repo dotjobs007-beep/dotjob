@@ -19,7 +19,26 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: "*", credentials: true }));
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://dotjob-api.onrender.com"
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true); // allow this origin
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true, // allow cookies / credentials
+}));
+
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
@@ -37,7 +56,7 @@ app.get("/health", (req, res) => {
 
 // Routes
 app.use("/api/user", validateSecret, userRoutes);
-app.use("/api/job", validateSecret, jobRoutes);
+app.use("/api/job", validateSecret, validateAuthorization,jobRoutes);
 
 app.use(errorHandler);
 

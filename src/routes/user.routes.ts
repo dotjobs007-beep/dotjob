@@ -10,8 +10,10 @@ const userController = new UserController();
 // Firebase signup/login
 router.post("/auth", firebaseAuth, userController.loginOrRegister);
 router.get("/profile", validateAuthorization, userController.fetchUserProfile);
-router.post("/update-profile", validateAuthorization, validateBody(updateSchema), userController.updateProfile);
+router.patch("/update-profile", validateAuthorization, validateBody(updateSchema), userController.updateProfile);
 router.patch("/connect-wallet/:address", validateAuthorization, userController.connectWallet);
+router.post("/logout", validateAuthorization, userController.logout);
+
 
 
 

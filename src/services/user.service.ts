@@ -1,7 +1,7 @@
 import { DecodedIdToken } from "firebase-admin/auth";
 import UserRepository from "../repositories/user.repo";
 import AppError from "../utils/appError";
-import { generateToken } from "../utils/tokenGenerator";
+import { generateToken, logoutUser } from "../utils/tokenGenerator";
 import { Response, Request } from "express";
 import { IUpdateUser } from "../interface/user.interface";
 import { checkIdentitySubscan } from "../utils/verify_pokadot";
@@ -64,40 +64,51 @@ export default class UserService {
   }
 
   async connectWallet(req: Request) {
-  const { address } = req.params;
-  const { userId } = req;
+    const { address } = req.params;
+    const { userId } = req;
 
-  if (!userId) throw new AppError("Account not found", 401);
+    if (!userId) throw new AppError("Account not found", 401);
 
-  const user = await this.userRepo.findById(userId);
-  if (!user) throw new AppError("Account not found", 401);
-  if (user.verified_onchain) return { message: "Already verified" };
+    const user = await this.userRepo.findById(userId);
+    if (!user) throw new AppError("Account not found", 401);
 
-  const result = await checkIdentitySubscan(address);
-
-  if (!result.judgements || result.judgements.length === 0) {
-    user.onchain_status = "Not Verified";
-  } else {
-    const { judgement } = result.judgements[0];
-
-    if (judgement === "Unknown" || judgement === "FeePaid") {
-      user.onchain_status = "Pending";
-    } else if (judgement === "Reasonable" || judgement === "KnownGood") {
-      user.onchain_status = "Verified";
-      user.verified_onchain = true;
-    } else {
-      user.onchain_status = "Not Verified";
+    // ✅ If already verified with same address, return early
+    if (user.address === address && user.verified_onchain) {
+      return { message: "Already verified" };
     }
+
+    // ✅ Check on-chain identity
+    const result = await checkIdentitySubscan(address);
+
+    // Update address if different
+    if (user.address !== address) user.address = address;
+
+    // ✅ Determine onchain status
+    user.onchain_status = this.getOnchainStatus(result?.judgements);
+    user.verified_onchain = user.onchain_status === "Verified";
+
+    // ✅ Save updates
+    const response = await this.userRepo.update(userId, user);
+    if (!response)
+      throw new AppError("Oops! Something went wrong, please try again", 500);
+
+    return { status: user.onchain_status };
   }
 
-  const response = await this.userRepo.update(userId, user);
-  if (!response) {
-    throw new AppError(
-      "Oops! Something went wrong, please try again",
-      500
-    );
+  /**
+   * Helper to decide onchain status based on judgements.
+   */
+  private getOnchainStatus(judgements: any[] | undefined): string {
+    if (!judgements || judgements.length === 0) return "Not Verified";
+
+    const { judgement } = judgements[0];
+    if (["Unknown", "FeePaid"].includes(judgement)) return "Pending";
+    if (["Reasonable", "KnownGood"].includes(judgement)) return "Verified";
+    return "Not Verified";
   }
 
-  return { status: user.onchain_status };
-}
+  async logout(res: Response) {
+    logoutUser(res);
+    return;
+  }
 }

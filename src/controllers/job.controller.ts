@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { sendResponse } from "../utils/responseHandler";
 import { asyncHandler } from "../utils/asyncHandler";
 import JobService from "../services/job.service";
+import { da } from "zod/v4/locales";
 
 export default class JobController {
   private jobService: JobService;
@@ -51,7 +52,7 @@ export default class JobController {
   });
 
     uploadResume = asyncHandler(async (req: Request, res: Response) => {
-    await this.jobService.uploadResume(req);
-    return sendResponse(res, 200, "resume uploaded successfully");
+   const url = await this.jobService.uploadResume(req);
+    return sendResponse(res, 200, "resume uploaded successfully", url);
   });
 }

@@ -32,7 +32,7 @@ router.patch(
 
 
 router.post(
-  "/upload-resume",
+  "/upload-file",
   jobController.uploadResume
 );
 

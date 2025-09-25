@@ -25,13 +25,13 @@ const userSchema = new Schema<IUser>(
     password: { type: String, required: false },
     role: { type: String, default: UserRole.Viewer },
     verified_onchain: { type: Boolean, default: false },
-    avatar: { type: String, required: false },
+    avatar: { type: String, default: "" },
     authProvider: { type: String, required: true },
     email_verified: { type: Boolean, required: true },
     phoneNumber: { type: String, default: "" },
-    about: { type: String, required: false },
+    about: { type: String, default: "" },
     skill: { type: [String], default: [] },
-    address: {type: String, required: false},
+    address: {type: String, default: ""},
     onchain_status: {type: String, required: false}
   },
   { timestamps: true }

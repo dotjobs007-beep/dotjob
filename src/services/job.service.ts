@@ -232,7 +232,6 @@ export default class JobService {
   async uploadResume(req: Request): Promise<string> {
     // Create a new formidable form
     const form = formidable({ multiples: false });
-
     try {
       const { files } = await new Promise<{ files: formidable.Files }>((resolve, reject) => {
         form.parse(req, (err, fields, files) => {
@@ -240,7 +239,6 @@ export default class JobService {
           resolve({ files });
         });
       });
-
       // Ensure a file exists
       if (!files.file) {
         throw new AppError("No file uploaded", 400);
@@ -265,8 +263,6 @@ export default class JobService {
       fs.unlink(file.filepath, (err) => {
         if (err) console.warn("Failed to delete temp file:", err);
       });
-
-      console.log("user uploaded resume to Cloudinary:", uploadResult.secure_url);
       return uploadResult.secure_url;
 
     } catch (error: any) {

@@ -16,3 +16,4 @@ export interface IdentityInfo {
   identity: boolean;
   judgements: IdentityJudgement[];
 }
+

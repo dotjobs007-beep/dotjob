@@ -1203,6 +1203,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/streamifier@npm:^0":
+  version: 0.1.2
+  resolution: "@types/streamifier@npm:0.1.2"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/475f787ae2b992a22f3b794ad0920d2b43e0541d126020c1edb25ebd60b736122d1c4db6813aa8fa9ad5cfed49b700a1e6ee5154acabac2ebc2bed7b40c0d667
+  languageName: node
+  linkType: hard
+
 "@types/strip-bom@npm:^3.0.0":
   version: 3.0.0
   resolution: "@types/strip-bom@npm:3.0.0"
@@ -1802,6 +1811,7 @@ __metadata:
     "@types/mongoose": "npm:^5.11.97"
     "@types/morgan": "npm:^1.9.10"
     "@types/node": "npm:^24.5.2"
+    "@types/streamifier": "npm:^0"
     "@types/validator": "npm:^13.15.3"
     axios: "npm:^1.12.2"
     class-transformer: "npm:^0.5.1"
@@ -1816,6 +1826,7 @@ __metadata:
     mongoose: "npm:8.5.2"
     morgan: "npm:^1.10.1"
     nodemon: "npm:^3.1.10"
+    streamifier: "npm:^0.1.1"
     ts-node-dev: "npm:^2.0.0"
     typescript: "npm:^5.9.2"
     zod: "npm:^4.1.8"
@@ -4033,6 +4044,13 @@ __metadata:
   version: 1.0.3
   resolution: "stream-shift@npm:1.0.3"
   checksum: 10c0/939cd1051ca750d240a0625b106a2b988c45fb5a3be0cebe9a9858cb01bc1955e8c7b9fac17a9462976bea4a7b704e317c5c2200c70f0ca715a3363b9aa4fd3b
+  languageName: node
+  linkType: hard
+
+"streamifier@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "streamifier@npm:0.1.1"
+  checksum: 10c0/132035d8519c65f3903047b06b003201d3eaef6eb164cf5ba86ee22c2203c3a0109198946dc579002e39f704b568bedc8ce61a729e0a8dd00249d0a9658353a4
   languageName: node
   linkType: hard
 

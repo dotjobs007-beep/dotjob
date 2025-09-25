@@ -1,4 +1,4 @@
-import {Response} from "express";
+import { Response } from "express";
 import jwt, { Secret, SignOptions, JwtPayload } from "jsonwebtoken";
 
 export interface TokenPayload {
@@ -23,19 +23,23 @@ export function generateToken(
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge:
-      typeof expiresIn === "string"
-        ? 7 * 24 * 60 * 60 * 1000
-        : expiresIn * 1000,
+    secure: false, // no HTTPS locally
+    sameSite: "lax", // or "strict"
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   return token;
 }
 
+export function logoutUser(res: Response) {
+  // Clear the JWT cookie
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+}
 export interface DecodedToken extends JwtPayload {
   id: string;
   role?: string;
 }
-
