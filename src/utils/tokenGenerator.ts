@@ -23,8 +23,8 @@ export function generateToken(
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false, // no HTTPS locally
-    sameSite: "lax", // or "strict"
+    secure: process.env.NODE_ENV === "production", // ✅ secure on production
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ✅ allow cross-site
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -35,8 +35,9 @@ export function logoutUser(res: Response) {
   // Clear the JWT cookie
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production", // ✅ secure on production
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ✅ allow cross-site
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 }
 export interface DecodedToken extends JwtPayload {
