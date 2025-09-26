@@ -22,7 +22,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "https://dotjob-api.onrender.com"
+  "https://dotjob-i4y3.onrender.com"
 ];
 
 app.use(cors({
