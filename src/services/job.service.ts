@@ -43,7 +43,6 @@ export default class JobService {
       title: body.title,
       creatorId: new mongoose.Types.ObjectId(userId),
       description: body.description,
-      position: body.position,
       employment_type: body.employment_type,
       work_arrangement: body.work_arrangement,
       salary_type: body.salary_type,
@@ -115,7 +114,6 @@ export default class JobService {
     const user = await this.userRepo.findById(userId);
     if (!user) throw new AppError("account not found", 401);
     if (!jobId) throw new AppError("job id is required", 500);
-
     const job = await this.jobRepo.getJobById(jobId);
     return job;
   }
@@ -195,6 +193,7 @@ export default class JobService {
     if (!job) throw new AppError("job not found", 404);
 
     // Only creator can fetch applications
+    console.log(job.creatorId.toString(), userId.toString());
     if (job.creatorId.toString() !== userId.toString()) {
       throw new AppError("not authorized", 403);
     }
@@ -214,7 +213,9 @@ export default class JobService {
     if (!userId) throw new AppError("account not found", 401);
 
     const { applicationId } = req.params;
-    const { status } = req.body;
+    const { status } = req.params;
+    if (!applicationId) throw new AppError("application id is required", 500);
+    if (!status) throw new AppError("status is required", 500);
 
     if (!["pending", "reviewed", "accepted", "rejected"].includes(status)) {
       throw new AppError("invalid status value", 400);
@@ -222,7 +223,7 @@ export default class JobService {
 
     const updated = await this.jobRepo.updateApplicationStatus(
       applicationId,
-      status
+      status as "pending" | "reviewed" | "accepted" | "rejected"
     );
     if (!updated) throw new AppError("application not found", 404);
 

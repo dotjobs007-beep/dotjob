@@ -9,7 +9,6 @@ export interface IJob extends Document {
   logo: string;
   title: string;
   description: string;
-  position: string;
   employment_type: string;   // full-time, part-time, contract, internship
   work_arrangement: string;  // remote, hybrid, on-site
   salary_type: string;       // hourly, monthly, yearly, commission
@@ -29,7 +28,6 @@ const jobSchema = new Schema<IJob>(
     title: { type: String, required: true },
     creatorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     description: { type: String, required: true },
-    position: { type: String, required: true },
     employment_type: { type: String, required: true },
     work_arrangement: { type: String, required: true },
     salary_type: { type: String, required: true },

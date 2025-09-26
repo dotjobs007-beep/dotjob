@@ -21,12 +21,11 @@ router.post(
 );
 
 router.get(
-  "/get-applications-for-job/:jobId",
+  "/applications/:jobId",
   jobController.getApplicationsForJob
 );
 router.patch(
-  "/update-job-application",
-  validateBody(jobApplicationSchema),
+  "/update-job-application/:applicationId/:status",
   jobController.updateApplicationStatus
 );
 

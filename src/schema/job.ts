@@ -3,7 +3,6 @@ import { z } from "zod";
 export const jobSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
-  position: z.string().min(2, "Position must be at least 2 characters"),
   is_active: z.boolean().optional(),
   
   employment_type: z.enum([

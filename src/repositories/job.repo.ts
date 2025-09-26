@@ -62,7 +62,7 @@ export default class JobRepository {
 
   // Get a single job by ID
   async getJobById(id: string): Promise<IJob | null> {
-    return Job.findById(id);
+    return Job.findById(id)
   }
 
   // Update a job by ID
