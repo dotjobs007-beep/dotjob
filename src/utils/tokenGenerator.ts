@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { NextFunction, Response } from "express";
 import jwt, { Secret, SignOptions, JwtPayload } from "jsonwebtoken";
 
 export interface TokenPayload {
@@ -20,13 +20,6 @@ export function generateToken(
   const options: SignOptions = { expiresIn };
 
   const token = jwt.sign(payload, secret, options);
-
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // ✅ secure on production
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ✅ allow cross-site
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
 
   return token;
 }

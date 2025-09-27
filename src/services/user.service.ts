@@ -35,9 +35,9 @@ export default class UserService {
       });
     }
 
-    generateToken(res, { id: user._id, role: user.role });
+   const token = generateToken(res, { id: user._id, role: user.role });
 
-    return user;
+    return { user, token };
   }
 
   async fetchUserProfile(id: string) {

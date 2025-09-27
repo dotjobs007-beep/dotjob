@@ -14,6 +14,7 @@ import clientLogs from "./routes/clientLogs.routes";
 import { validateSecret } from "./middlewares/validate_secret.middleware";
 import { validateAuthorization } from "./middlewares/validator";
 import { sendResponse } from "./utils/responseHandler";
+import { validateToken } from "./middlewares/validate_token";
 
 
 dotenv.config();
@@ -79,7 +80,7 @@ app.get("/health", (req, res) => {
 
 // Routes
 app.use("/api/user", validateSecret, userRoutes);
-app.use("/api/job", validateSecret, validateAuthorization,jobRoutes);
+app.use("/api/job", validateSecret, validateToken, jobRoutes);
 // client logs route (no secret) - used to capture mobile/browser logs for debugging
 app.use("/api/client", clientLogs);
 

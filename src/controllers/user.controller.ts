@@ -19,7 +19,7 @@ export default class UserController {
     }
 
     const user = await this.userService.loginOrRegister(res, firebaseUser);
-    return sendResponse(res, 200, "Login/Register successful");
+    return sendResponse(res, 200, "Login/Register successful", user);
   });
 
   fetchUserProfile = asyncHandler(async (req: Request, res: Response) => {
