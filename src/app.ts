@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
+// Optional Sentry integration (loaded dynamically so missing package won't crash)
+let Sentry: any = null;
 import connectDB from "./config/database";
 import { errorHandler } from "./middlewares/errorHandler";
 import cookieParser from "cookie-parser";
@@ -16,6 +18,22 @@ import { sendResponse } from "./utils/responseHandler";
 
 dotenv.config();
 connectDB();
+
+// Initialize Sentry only if DSN is provided. Use dynamic require to avoid hard dependency.
+try {
+  if (process.env.SENTRY_DSN) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    Sentry = require("@sentry/node");
+    Sentry.init({
+      dsn: process.env.SENTRY_DSN,
+      environment: process.env.NODE_ENV || "development",
+    });
+    console.log("Sentry initialized");
+  }
+} catch (e: any) {
+  console.warn("Sentry not available or failed to initialize:", e?.message || e);
+  Sentry = null;
+}
 
 const app = express();
 
