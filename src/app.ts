@@ -8,6 +8,7 @@ import { errorHandler } from "./middlewares/errorHandler";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.routes";
 import jobRoutes from "./routes/job.routes"
+import clientLogs from "./routes/clientLogs.routes";
 import { validateSecret } from "./middlewares/validate_secret.middleware";
 import { validateAuthorization } from "./middlewares/validator";
 import { sendResponse } from "./utils/responseHandler";
@@ -22,7 +23,11 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "https://dotjob-i4y3.onrender.com"
+  "https://dotjob-i4y3.onrender.com",
+  "https://r71vnd5h-3000.uks1.devtunnels.ms",
+  // Local LAN origins for testing from mobile devices on your Wi-Fi
+  "http://192.168.2.100:3000",
+  "http://192.168.2.100:3001"
 ];
 
 app.use(cors({
@@ -57,6 +62,8 @@ app.get("/health", (req, res) => {
 // Routes
 app.use("/api/user", validateSecret, userRoutes);
 app.use("/api/job", validateSecret, validateAuthorization,jobRoutes);
+// client logs route (no secret) - used to capture mobile/browser logs for debugging
+app.use("/api/client", clientLogs);
 
 app.use(errorHandler);
 
