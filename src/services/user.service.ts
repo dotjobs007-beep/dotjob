@@ -55,6 +55,8 @@ export default class UserService {
     if (body.about) user.about = body.about;
     if (body.phoneNumber) user.phoneNumber = body.phoneNumber;
     if (body.skills && body.skills.length > 0) user.skill = body.skills;
+    if (body.avatar) user.avatar = body.avatar;
+    if (body.name) user.name = body.name;
 
     const response = await this.userRepo.update(userId, user);
     if (!response)

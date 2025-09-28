@@ -2,7 +2,9 @@
 export interface IUpdateUser {
     about?: string
     phoneNumber: string;
-    skills: string[]
+    skills?: string[]
+    avatar?: string;
+    name?: string;
 }
 
 
