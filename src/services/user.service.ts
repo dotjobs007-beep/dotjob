@@ -74,6 +74,12 @@ export default class UserService {
     const user = await this.userRepo.findById(userId);
     if (!user) throw new AppError("Account not found", 401);
 
+    // ✅ Check if wallet is already connected to another account
+    const existingUser = await this.userRepo.findUserByWalletAddress(address);
+    if (existingUser && existingUser._id.toString() !== userId) {
+      throw new AppError("Wallet already connected to another account", 400);
+    }
+
     // ✅ If already verified with same address, return early
     if (user.address === address && user.verified_onchain) {
       return { message: "Already verified" };

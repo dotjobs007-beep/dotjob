@@ -23,4 +23,8 @@ async findByEmail(email: string): Promise<IUser | null> {
   async delete(id: string): Promise<IUser | null> {
     return await User.findByIdAndDelete(id);
   }
+
+  async findUserByWalletAddress(address: string): Promise<IUser | null> {
+    return await User.findOne({ address }).select("-password");
+  }
 }
