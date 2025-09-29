@@ -16,6 +16,12 @@ export interface IUser extends Document {
   skill: string[];
   address: string;
   onchain_status: string;
+  linkedInProfile?: string;
+  xProfile?: string;
+  githubProfile?: string;
+  jobSeeker: boolean;
+  location?: string;
+
 }
 
 const userSchema = new Schema<IUser>(
@@ -32,7 +38,12 @@ const userSchema = new Schema<IUser>(
     about: { type: String, default: "" },
     skill: { type: [String], default: [] },
     address: {type: String, default: ""},
-    onchain_status: {type: String, required: false}
+    onchain_status: {type: String, required: false},
+    linkedInProfile: { type: String, required: "" },
+    xProfile: { type: String, required: "" },
+    githubProfile: { type: String, required: "" },
+    jobSeeker: { type: Boolean, default: true },
+    location: { type: String, required: "" },
   },
   { timestamps: true }
 );

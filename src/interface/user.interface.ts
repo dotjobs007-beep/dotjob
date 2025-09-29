@@ -5,6 +5,11 @@ export interface IUpdateUser {
     skills?: string[]
     avatar?: string;
     name?: string;
+    linkedInProfile?: string;
+    xProfile?: string;
+    githubProfile?: string;
+    jobSeeker?: boolean;
+    location?: string;
 }
 
 

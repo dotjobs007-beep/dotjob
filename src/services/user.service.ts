@@ -57,6 +57,11 @@ export default class UserService {
     if (body.skills && body.skills.length > 0) user.skill = body.skills;
     if (body.avatar) user.avatar = body.avatar;
     if (body.name) user.name = body.name;
+    if (body.linkedInProfile) user.linkedInProfile = body.linkedInProfile;
+    if (body.xProfile) user.xProfile = body.xProfile;
+    if (body.githubProfile) user.githubProfile = body.githubProfile;
+    if (typeof body.jobSeeker === "boolean") user.jobSeeker = body.jobSeeker;
+    if (body.location) user.location = body.location;
 
     const response = await this.userRepo.update(userId, user);
     if (!response)
