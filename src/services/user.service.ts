@@ -35,7 +35,7 @@ export default class UserService {
       });
     }
 
-   const token = generateToken(res, { id: user._id, role: user.role });
+    const token = generateToken(res, { id: user._id, role: user.role });
 
     return { user, token };
   }
@@ -51,14 +51,33 @@ export default class UserService {
   async updateUserProfile(userId: string, body: IUpdateUser) {
     const user = await this.userRepo.findById(userId);
     if (!user) throw new AppError("Account not found", 404);
-
     if (body.about) user.about = body.about;
     if (body.phoneNumber) user.phoneNumber = body.phoneNumber;
     if (body.skills && body.skills.length > 0) user.skill = body.skills;
     if (body.avatar) user.avatar = body.avatar;
     if (body.name) user.name = body.name;
-    if (body.linkedInProfile) user.linkedInProfile = body.linkedInProfile;
-    if (body.xProfile) user.xProfile = body.xProfile;
+
+    // Validate profile links
+    if (body.githubProfile){
+      const isValidLink = this.validateProfileLink(body.githubProfile, 'github')
+      if (!isValidLink) throw new AppError("Invalid GitHub profile link", 400);
+      user.githubProfile = body.githubProfile;
+    }
+
+    // Validate profile links
+    if (body.xProfile){
+      const isValidLink = this.validateProfileLink(body.xProfile, 'x')
+      if (!isValidLink) throw new AppError("Invalid Twitter profile link", 400);
+      user.xProfile = body.xProfile;
+    }
+
+    // Validate profile links
+    if (body.linkedInProfile){
+      const isValidLink = this.validateProfileLink(body.linkedInProfile, 'linkedin')
+      if (!isValidLink) throw new AppError("Invalid LinkedIn profile link", 400);
+      user.linkedInProfile = body.linkedInProfile;
+    }
+
     if (body.githubProfile) user.githubProfile = body.githubProfile;
     if (typeof body.jobSeeker === "boolean") user.jobSeeker = body.jobSeeker;
     if (body.location) user.location = body.location;
@@ -68,6 +87,26 @@ export default class UserService {
       throw new AppError("Oops! Something went wrong, please try again", 500);
 
     return response;
+  }
+
+  private validateProfileLink(url: string, platform: string): boolean {
+    try {
+      const parsedUrl = new URL(url);
+      const hostname = parsedUrl.hostname.replace("www.", "").toLowerCase();
+
+      if (platform === "linkedin") {
+        return hostname === "linkedin.com";
+      }
+      if (platform === "github") {
+        return hostname === "github.com";
+      }
+      if (platform === "x") {
+        return hostname === "x.com";
+      }
+      return false;
+    } catch {
+      return false;
+    }
   }
 
   async connectWallet(req: Request) {

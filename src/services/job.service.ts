@@ -10,6 +10,7 @@ import fs from "fs";
 // import { cloud } from "../config/cloudinary";
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from 'dotenv';
+import { isTrustedUrl } from "../utils/validate_link";
 
 dotenv.config();
 
@@ -160,6 +161,11 @@ export default class JobService {
     if (!userId) throw new AppError("account not found", 401);
 
     const { jobId, resume, linkedInProfile, xProfile, coverLetter } = req.body;
+
+    const isValidLink = isTrustedUrl(resume);
+    if (!isValidLink) {
+      throw new AppError("Please provide a valid and trusted URL", 400);
+    }
 
     // Ensure job exists
     const job = await this.jobRepo.getJobById(jobId);

@@ -8,9 +8,9 @@ export const updateSchema = z.object({
   skills: z.array(z.string()).optional(),
   avatar: z.string().url().optional(),
   name: z.string().min(3).max(30).optional(),
-  linkedInProfile: z.string().url().optional(),
-  xProfile: z.string().url().optional(),
-  githubProfile: z.string().url().optional(),
+  linkedInProfile: z.string().url().or(z.literal("")).optional(),
+  xProfile: z.string().url().or(z.literal("")).optional(),
+  githubProfile: z.string().url().or(z.literal("")).optional(),
   jobSeeker: z.boolean().optional(),
-  location: z.string().max(50).optional(),
+  location: z.string().max(50).or(z.literal("")).optional(),
 });
