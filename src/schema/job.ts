@@ -4,6 +4,9 @@ export const jobSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
   is_active: z.boolean().optional(),
+  requirements: z.string().min(10, "Requirements must be at least 10 characters"),
+  category: z.string().min(2, "Category is required"),
+  salary_token: z.string().min(2, "Salary token is required"),
   
   employment_type: z.enum([
     "full-time",
@@ -45,8 +48,5 @@ export const jobSchema = z.object({
 export const jobApplicationSchema = z.object({
   jobId: z.string().min(1, "Job ID is required"),
   resume: z.string().url("Resume must be a valid URL or file path"),
-  linkedInProfile: z.string().url("LinkedIn profile must be a valid URL").optional(),
-  xProfile: z.string().url("X profile must be a valid URL").optional(),
-  coverLetter: z.string().min(10, "Cover letter must be at least 10 characters").optional(),
   status: z.enum(["pending", "reviewed", "accepted", "rejected"]).optional()
 });

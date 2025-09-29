@@ -52,7 +52,10 @@ export default class JobService {
       company_description: body.company_description,
       company_location: body.company_location,
       is_active: body.is_active !== undefined ? body.is_active : true,
+      requirements: body.requirements,
       logo: body.logo,
+      category: body.category,
+      salary_token: body.salary_token,
     });
     if (!newJob)
       throw new AppError("oops! something went wrong, please try again", 500);

@@ -21,6 +21,9 @@ export interface IJob extends Document {
   company_description: string;
   company_location: string;
   is_active: boolean;
+  category: string;
+  salary_token: string;
+  requirements: string;
 }
 
 const jobSchema = new Schema<IJob>(
@@ -40,7 +43,10 @@ const jobSchema = new Schema<IJob>(
     company_description: { type: String },
     company_location: { type: String, required: true },
     logo: { type: String, default: "" },
+    category: { type: String, default: "" },
+    salary_token: { type: String, default: "USDT" },
     is_active: { type: Boolean, default: true },
+    requirements: { type: String, default: "" },
   },
   { timestamps: true }
 );
