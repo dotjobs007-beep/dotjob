@@ -12,5 +12,8 @@ export const updateSchema = z.object({
   xProfile: z.string().url().or(z.literal("")).optional(),
   githubProfile: z.string().url().or(z.literal("")).optional(),
   jobSeeker: z.boolean().optional(),
+  gender: z.string().min(4).max(20).or(z.literal("")).optional(),
+  ethnicity: z.string().min(4).max(20).or(z.literal("")).optional(),
+  primaryLanguage: z.string().min(2).max(30).or(z.literal("")).optional(),
   location: z.string().max(50).or(z.literal("")).optional(),
 });

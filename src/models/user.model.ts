@@ -21,7 +21,9 @@ export interface IUser extends Document {
   githubProfile?: string;
   jobSeeker: boolean;
   location?: string;
-
+  gender?: string;
+  ethnicity?: string;
+  primaryLanguage?: string;
 }
 
 const userSchema = new Schema<IUser>(
@@ -44,6 +46,9 @@ const userSchema = new Schema<IUser>(
     githubProfile: { type: String, required: "" },
     jobSeeker: { type: Boolean, default: true },
     location: { type: String, required: "" },
+    gender: { type: String, required: "" },
+    ethnicity: { type: String, required: "" },
+    primaryLanguage: { type: String, required: "" },
   },
   { timestamps: true }
 );

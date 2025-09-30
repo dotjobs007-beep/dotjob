@@ -81,6 +81,9 @@ export default class UserService {
     if (body.githubProfile) user.githubProfile = body.githubProfile;
     if (typeof body.jobSeeker === "boolean") user.jobSeeker = body.jobSeeker;
     if (body.location) user.location = body.location;
+    if (body.gender) user.gender = body.gender;
+    if (body.ethnicity) user.ethnicity = body.ethnicity;
+    if (body.primaryLanguage) user.primaryLanguage = body.primaryLanguage;
 
     const response = await this.userRepo.update(userId, user);
     if (!response)

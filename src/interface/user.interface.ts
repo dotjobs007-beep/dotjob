@@ -10,6 +10,9 @@ export interface IUpdateUser {
     githubProfile?: string;
     jobSeeker?: boolean;
     location?: string;
+    gender?: string;
+    ethnicity?: string;
+    primaryLanguage?: string;
 }
 
 

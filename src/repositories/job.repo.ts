@@ -134,7 +134,7 @@ export default class JobRepository {
     const sortOptions: any = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
     const applications = await JobApplication.find(query)
-      .populate("applicantId", "name email skill about avatar address verified_onchain address")
+      .populate("applicantId", "name email skill about avatar address verified_onchain address gender ethnicity primaryLanguage") // Populate applicant details
       .sort(sortOptions)
       .skip(skip)
       .limit(limit);
