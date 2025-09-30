@@ -160,7 +160,19 @@ export default class JobService {
     const { userId } = req;
     if (!userId) throw new AppError("account not found", 401);
 
-    const { jobId, resume, linkedInProfile, xProfile, coverLetter } = req.body;
+    const {
+      jobId,
+      resume,
+      linkedInProfile,
+      xProfile,
+      coverLetter,
+      fullName,
+      contactMethod,
+      contactHandle,
+      polkadotExperience,
+      polkadotDescription,
+      portfolioLink,
+    } = req.body;
 
     const isValidLink = isTrustedUrl(resume);
     if (!isValidLink) {
@@ -184,6 +196,12 @@ export default class JobService {
       linkedInProfile,
       xProfile,
       coverLetter,
+      fullName,
+      contactMethod,
+      contactHandle,
+      polkadotExperience,
+      polkadotDescription,
+      portfolioLink,
     });
 
     return application;

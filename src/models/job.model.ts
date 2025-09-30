@@ -64,6 +64,12 @@ export interface IJobApplication extends Document {
   linkedInProfile: string;                    
   coverLetter?: string;
   xProfile: string;
+  fullName?: string;
+  contactMethod?: string;
+  contactHandle?: string;
+  polkadotExperience?: boolean;
+  polkadotDescription?: string;
+  portfolioLink?: string;
   status: "pending" | "reviewed" | "accepted" | "rejected";
   appliedAt: Date;
 }
@@ -74,6 +80,12 @@ const jobApplicationSchema = new Schema<IJobApplication>(
     applicantId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     resume: { type: String, required: true },
     linkedInProfile: {type: String, default: ""},
+    fullName: { type: String, default: "" },
+    contactMethod: { type: String, default: "" },
+    contactHandle: { type: String, default: "" },
+    polkadotExperience: { type: Boolean, default: false },
+    polkadotDescription: { type: String, default: "" },
+    portfolioLink: { type: String, default: "" },
     xProfile: {type: String, default: ""},
     status: {
       type: String,
