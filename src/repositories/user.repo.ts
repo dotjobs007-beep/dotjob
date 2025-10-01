@@ -1,4 +1,5 @@
 // src/repositories/user.repository.ts
+import { searchParams } from "../interface/user.interface";
 import User, { IUser } from "../models/user.model";
 
 export default class UserRepository {
@@ -7,10 +8,9 @@ export default class UserRepository {
     return await user.save();
   }
 
-async findByEmail(email: string): Promise<IUser | null> {
-  return await User.findOne({ email }).select("-password");
-}
-
+  async findByEmail(email: string): Promise<IUser | null> {
+    return await User.findOne({ email }).select("-password");
+  }
 
   async findById(id: string): Promise<IUser | null> {
     return await User.findById(id).select("-password");
@@ -26,5 +26,71 @@ async findByEmail(email: string): Promise<IUser | null> {
 
   async findUserByWalletAddress(address: string): Promise<IUser | null> {
     return await User.findOne({ address }).select("-password");
+  }
+
+  async findAllUsers(filter: searchParams): Promise<{
+    data: IUser[];
+    pagination: {
+      totalUsers: number;
+      totalPages: number;
+      currentPage: number;
+      pageSize: number;
+    };
+  }> {
+    const page = filter.page || 1;
+    const skip = (page - 1) * filter.limit!;
+    const limit = filter.limit || 10;
+    const sortBy = filter.sortBy || "createdAt";
+    const sortOrder = filter.sortOrder || "desc";
+    const sortOptions: any = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+    const query: any = {};
+    if (filter.name) {
+      query.name = { $regex: filter.name, $options: "i" };
+    }
+    if (filter.email) {
+      query.email = { $regex: filter.email, $options: "i" };
+    }
+    if (filter.address) {
+      query.address = { $regex: filter.address, $options: "i" };
+    }
+    if (filter.jobSeeker !== undefined) {
+      query.jobSeeker = filter.jobSeeker;
+    }
+    if (filter.skills && filter.skills.length > 0) {
+      query.skills = { $in: filter.skills };
+    }
+    if (filter.location) {
+      query.location = { $regex: filter.location, $options: "i" };
+    }
+    if (filter.primaryLanguage) {
+      query.primaryLanguage = { $regex: filter.primaryLanguage, $options: "i" };
+    }
+    if (filter.experienceLevel) {
+      query.experienceLevel = filter.experienceLevel;
+    }
+    if (filter.ethnicity) {
+      query.ethnicity = { $regex: filter.ethnicity, $options: "i" };
+    }
+    if (filter.location) {
+      query.location = { $regex: filter.location, $options: "i" };
+    }
+
+    const users = await User.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limit);
+
+    const totalUsers = await User.countDocuments(query);
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    return {
+      data: users,
+      pagination: {
+        totalUsers,
+        currentPage: page,
+        totalPages,
+        pageSize: limit,
+      },
+    };
   }
 }

@@ -56,4 +56,9 @@ export default class UserController {
     await this.userService.logout(res);
     return sendResponse(res, 200, "logout successful");
   });
+
+  findAllUsers = asyncHandler(async (req: Request, res: Response) => {
+    const users = await this.userService.findAllUsers(req);
+    return sendResponse(res, 200, "users fetched successful", users);
+  });
 }

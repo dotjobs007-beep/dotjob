@@ -9,12 +9,12 @@ import formidable, { File } from "formidable";
 import fs from "fs";
 // import { cloud } from "../config/cloudinary";
 import { v2 as cloudinary } from "cloudinary";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 import { isTrustedUrl } from "../utils/validate_link";
 
 dotenv.config();
 
-cloudinary.config({ 
+cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
@@ -28,7 +28,6 @@ export default class JobService {
     this.jobRepo = new JobRepository();
     this.userRepo = new UserRepository();
   }
-  
 
   async postJob(req: Request) {
     const { userId } = req;
@@ -261,19 +260,23 @@ export default class JobService {
     // Create a new formidable form
     const form = formidable({ multiples: false });
     try {
-      const { files } = await new Promise<{ files: formidable.Files }>((resolve, reject) => {
-        form.parse(req, (err, fields, files) => {
-          if (err) return reject(err);
-          resolve({ files });
-        });
-      });
+      const { files } = await new Promise<{ files: formidable.Files }>(
+        (resolve, reject) => {
+          form.parse(req, (err, fields, files) => {
+            if (err) return reject(err);
+            resolve({ files });
+          });
+        }
+      );
       // Ensure a file exists
       if (!files.file) {
         throw new AppError("No file uploaded", 400);
       }
 
       // Narrow type to a single file
-      const file = Array.isArray(files.file) ? files.file[0] : (files.file as formidable.File);
+      const file = Array.isArray(files.file)
+        ? files.file[0]
+        : (files.file as formidable.File);
 
       if (!file.filepath || !file.originalFilename) {
         throw new AppError("Invalid file", 400);
@@ -281,8 +284,8 @@ export default class JobService {
 
       // Upload to Cloudinary
       const uploadResult = await cloudinary.uploader.upload(file.filepath, {
-        folder: "resumes",   
-        resource_type: "auto", 
+        folder: "resumes",
+        resource_type: "auto",
         use_filename: true,
         unique_filename: false,
       });
@@ -292,7 +295,6 @@ export default class JobService {
         if (err) console.warn("Failed to delete temp file:", err);
       });
       return uploadResult.secure_url;
-
     } catch (error: any) {
       throw new AppError(error.message || "Failed to upload resume", 500);
     }

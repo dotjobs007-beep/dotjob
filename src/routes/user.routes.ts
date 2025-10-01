@@ -14,6 +14,7 @@ router.get("/profile", validateToken, userController.fetchUserProfile);
 router.patch("/update-profile", validateToken, validateBody(updateSchema), userController.updateProfile);
 router.patch("/connect-wallet/:address", validateToken, userController.connectWallet);
 router.post("/logout", validateToken, userController.logout);
+router.get("/all-users", validateToken, userController.findAllUsers);
 
 
 

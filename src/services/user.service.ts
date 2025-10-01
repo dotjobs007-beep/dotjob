@@ -3,7 +3,7 @@ import UserRepository from "../repositories/user.repo";
 import AppError from "../utils/appError";
 import { generateToken, logoutUser } from "../utils/tokenGenerator";
 import { Response, Request } from "express";
-import { IUpdateUser } from "../interface/user.interface";
+import { IUpdateUser, searchParams } from "../interface/user.interface";
 import { checkIdentitySubscan } from "../utils/verify_pokadot";
 
 export default class UserService {
@@ -165,5 +165,30 @@ export default class UserService {
   async logout(res: Response) {
     logoutUser(res);
     return;
+  }
+
+  async findAllUsers(req: Request) {
+    const { userId } = req;
+    if (!userId) throw new AppError("account not found", 401);
+    const user = await this.userRepo.findById(userId);
+    if (!user) throw new AppError("account not found", 401);
+
+    const params = req.query;
+
+    const filter: searchParams = {
+      name: params.name as string,
+      email: params.email as string,
+      address: params.address as string,
+      jobSeeker: params.jobSeeker === "true" ? true : params.jobSeeker === "false" ? false : undefined,
+      skills: params.skills ? (params.skills as string).split(",") : undefined,
+      location: params.location as string,
+      primaryLanguage: params.primaryLanguage as string,
+      experienceLevel: params.experienceLevel as string,
+      xProfile: params.xProfile as string,
+      githubProfile: params.githubProfile as string,
+      linkedInProfile: params.linkedInProfile as string,
+    }
+
+    return this.userRepo.findAllUsers(filter);
   }
 }
