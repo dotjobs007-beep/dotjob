@@ -88,7 +88,11 @@ app.use(errorHandler);
 
 app.use((req, res, next) => {
   console.log("404 handler reached for:", req.originalUrl);
-  return sendResponse(res, 404, "route not found");
+    res.status(404).json({
+    status: "error",
+    code: 404,
+    message: "Not Found",
+  });
 });
 
 

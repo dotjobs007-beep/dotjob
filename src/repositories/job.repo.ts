@@ -223,4 +223,45 @@ export default class JobRepository {
 
     return applicant;
   }
+
+  // Get All Jobs Applied by User
+  async getJobsAppliedByUser(
+    userId: string,
+    page = 1,
+    limit = 10,
+    sortBy = "createdAt",
+    sortOrder: "desc" 
+  ): Promise<{
+    data: IJobApplication[];
+    pagination: {
+      totalJobs: number;
+      totalPages: number;
+      currentPage: number;
+      pageSize: number;
+    };
+  }> {
+    const query = { applicantId: userId };
+
+    const skip = (page - 1) * limit;
+    const sortOptions: any = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+
+    const jobs = await JobApplication.find(query)
+      .populate("jobId")
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limit);
+
+    const totalJobs = await JobApplication.countDocuments(query);
+    const totalPages = Math.ceil(totalJobs / limit);
+
+    return {
+      data: jobs,
+      pagination: {
+        totalJobs,
+        totalPages,
+        currentPage: page,
+        pageSize: limit,
+      },
+    };
+  }
 }

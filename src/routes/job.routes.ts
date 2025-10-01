@@ -36,4 +36,9 @@ router.post(
   jobController.uploadResume
 );
 
+router.get(
+  "/jobs-applied-by-user",
+  jobController.getJobsAppliedByUser
+);
+
 export default router;

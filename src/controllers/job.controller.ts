@@ -55,4 +55,9 @@ export default class JobController {
    const url = await this.jobService.uploadResume(req);
     return sendResponse(res, 200, "resume uploaded successfully", url);
   });
+
+  getJobsAppliedByUser = asyncHandler(async (req: Request, res: Response) => {
+    const jobs = await this.jobService.getJobsAppliedByUser(req);
+    return sendResponse(res, 200, "jobs applied by user fetched successfully", jobs);
+  });
 }

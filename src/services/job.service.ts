@@ -297,4 +297,24 @@ export default class JobService {
       throw new AppError(error.message || "Failed to upload resume", 500);
     }
   }
+
+  // Get all jobs applied by user
+  async getJobsAppliedByUser(req: Request) {
+    const { userId } = req;
+    if (!userId) throw new AppError("account not found", 401);
+
+    const { page = 1, limit = 10, sortBy, sortOrder } = req.query;
+    const user = await this.userRepo.findById(userId);
+    if (!user) throw new AppError("account not found", 401);
+
+    const sortOrderFormatted = "desc";
+
+    return this.jobRepo.getJobsAppliedByUser(
+      userId,
+      Number(page),
+      Number(limit),
+      (sortBy as string) || "createdAt",
+      sortOrderFormatted
+    );
+  }
 }
