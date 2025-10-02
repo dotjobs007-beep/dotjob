@@ -57,12 +57,11 @@ export const jobApplicationSchema = z.object({
     .optional(),
   polkadotExperience: z.boolean().optional(),
   polkadotDescription: z
-    .string()
-    .min(5, "Brief description required")
+    .string().or(z.literal(""))
     .optional(),
   portfolioLink: z
     .string()
     .url("Portfolio link must be a valid URL")
     .optional(),
-  status: z.enum(["pending", "reviewed", "accepted", "rejected"]).optional(),
+  status: z.enum(["pending", "reviewing", "accepted", "rejected"]).optional(),
 });

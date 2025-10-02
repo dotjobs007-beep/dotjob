@@ -177,7 +177,6 @@ export default class UserService {
 
     const filter: searchParams = {
       name: params.name as string,
-      email: params.email as string,
       address: params.address as string,
       jobSeeker: params.jobSeeker === "true" ? true : params.jobSeeker === "false" ? false : undefined,
       skills: params.skills ? (params.skills as string).split(",") : undefined,

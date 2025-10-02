@@ -242,7 +242,7 @@ export default class JobRepository {
   // Update application status (accept/reject/reviewed)
   async updateApplicationStatus(
     applicationId: string,
-    status: "pending" | "reviewed" | "accepted" | "rejected"
+    status: "pending" | "reviewing" | "accepted" | "rejected" | "reviewed"
   ): Promise<IJobApplication | null> {
     return JobApplication.findByIdAndUpdate(
       applicationId,

@@ -48,15 +48,7 @@ export default class UserRepository {
     // Build an $or array if user wants to search across multiple fields (name OR email OR location OR skills)
     const orClauses: any[] = [];
     if (filter.name) {
-      // If name looks like an email (contains @), treat it as an email search
-      if (filter.name.includes("@")) {
-        orClauses.push({ email: { $regex: filter.name, $options: "i" } });
-      } else {
         orClauses.push({ name: { $regex: filter.name, $options: "i" } });
-      }
-    }
-    if (filter.email) {
-      orClauses.push({ email: { $regex: filter.email, $options: "i" } });
     }
     if (filter.location) {
       orClauses.push({ location: { $regex: filter.location, $options: "i" } });

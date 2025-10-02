@@ -151,6 +151,7 @@ export default class JobService {
     const { jobId } = req.params;
     if (!jobId) throw new AppError("job id is required", 500);
     const body: IJob = req.body;
+    console.log(body);
     const update = await this.jobRepo.updateJob(jobId, userId, body);
     if (!update)
       throw new AppError("oops! something went wrong, please try again", 500);
@@ -245,13 +246,13 @@ export default class JobService {
     if (!applicationId) throw new AppError("application id is required", 500);
     if (!status) throw new AppError("status is required", 500);
 
-    if (!["pending", "reviewed", "accepted", "rejected"].includes(status)) {
+    if (!["pending", "reviewing", "accepted", "rejected"].includes(status)) {
       throw new AppError("invalid status value", 400);
     }
 
     const updated = await this.jobRepo.updateApplicationStatus(
       applicationId,
-      status as "pending" | "reviewed" | "accepted" | "rejected"
+      status as "pending" | "reviewing" | "accepted" | "rejected"
     );
     if (!updated) throw new AppError("application not found", 404);
 
