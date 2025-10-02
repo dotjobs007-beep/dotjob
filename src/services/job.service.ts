@@ -151,7 +151,6 @@ export default class JobService {
     const { jobId } = req.params;
     if (!jobId) throw new AppError("job id is required", 500);
     const body: IJob = req.body;
-    console.log(body);
     const update = await this.jobRepo.updateJob(jobId, userId, body);
     if (!update)
       throw new AppError("oops! something went wrong, please try again", 500);
@@ -222,7 +221,6 @@ export default class JobService {
     if (!job) throw new AppError("job not found", 404);
 
     // Only creator can fetch applications
-    console.log(job.creatorId.toString(), userId.toString());
     if (job.creatorId.toString() !== userId.toString()) {
       throw new AppError("not authorized", 403);
     }

@@ -28,10 +28,8 @@ try {
       dsn: process.env.SENTRY_DSN,
       environment: process.env.NODE_ENV || "development",
     });
-    console.log("Sentry initialized");
   }
 } catch (e: any) {
-  console.warn("Sentry not available or failed to initialize:", e?.message || e);
   Sentry = null;
 }
 
@@ -87,7 +85,6 @@ app.use("/api/client", clientLogs);
 app.use(errorHandler);
 
 app.use((req, res, next) => {
-  console.log("404 handler reached for:", req.originalUrl);
     res.status(404).json({
     status: "error",
     code: 404,
