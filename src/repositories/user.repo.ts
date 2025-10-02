@@ -44,11 +44,30 @@ export default class UserRepository {
     const sortOrder = filter.sortOrder || "desc";
     const sortOptions: any = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
     const query: any = {};
+
+    // Build an $or array if user wants to search across multiple fields (name OR email OR location OR skills)
+    const orClauses: any[] = [];
     if (filter.name) {
-      query.name = { $regex: filter.name, $options: "i" };
+      // If name looks like an email (contains @), treat it as an email search
+      if (filter.name.includes("@")) {
+        orClauses.push({ email: { $regex: filter.name, $options: "i" } });
+      } else {
+        orClauses.push({ name: { $regex: filter.name, $options: "i" } });
+      }
     }
     if (filter.email) {
-      query.email = { $regex: filter.email, $options: "i" };
+      orClauses.push({ email: { $regex: filter.email, $options: "i" } });
+    }
+    if (filter.location) {
+      orClauses.push({ location: { $regex: filter.location, $options: "i" } });
+    }
+    if (filter.skills && filter.skills.length > 0) {
+      // match any user who has at least one of the skills
+      orClauses.push({ skills: { $in: filter.skills } });
+    }
+
+    if (orClauses.length > 0) {
+      query.$or = orClauses;
     }
     if (filter.address) {
       query.address = { $regex: filter.address, $options: "i" };

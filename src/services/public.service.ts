@@ -46,6 +46,16 @@ export default class PublicService {
 
   async findAllUsers(req: Request) {
     const params = req.query;
+    // normalize skills: allow ?skills=js,react or ?skills[]=js&skills[]=react
+    let skills: string[] | undefined;
+    if (params.skills) {
+      if (Array.isArray(params.skills)) {
+        skills = params.skills.map((s) => String(s));
+      } else {
+        const raw = String(params.skills);
+        skills = raw.includes(",") ? raw.split(",").map((s) => s.trim()).filter(Boolean) : [raw];
+      }
+    }
 
     const filter: searchParams = {
       name: params.name as string,
@@ -53,6 +63,7 @@ export default class PublicService {
       limit: params.limit ? Number(params.limit) : 10,
       sortBy: (params.sortBy as string) || "createdAt",
       sortOrder: (params.sortOrder as "asc" | "desc") || "desc",
+      skills,
     };
 
     const { data: users, pagination } = await this.userRepo.findAllUsers(
