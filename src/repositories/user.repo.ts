@@ -86,7 +86,7 @@ export default class UserRepository {
       query.location = { $regex: filter.location, $options: "i" };
     }
 
-    const users = await User.find(query)
+    const users = await User.find(query).select("-password, -email")
       .sort(sortOptions)
       .skip(skip)
       .limit(limit);
