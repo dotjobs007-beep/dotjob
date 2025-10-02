@@ -187,7 +187,11 @@ export default class UserService {
       xProfile: params.xProfile as string,
       githubProfile: params.githubProfile as string,
       linkedInProfile: params.linkedInProfile as string,
-    }
+      page: params.page ? Number(params.page) : 1,
+      limit: params.limit ? Number(params.limit) : 10,
+      sortBy: (params.sortBy as string) || "createdAt",
+      sortOrder: (params.sortOrder as "asc" | "desc") || "desc",
+    };
 
     return this.userRepo.findAllUsers(filter);
   }

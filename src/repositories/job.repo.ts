@@ -24,6 +24,7 @@ export default class JobRepository {
       title,
       employmentType,
       workArrangement,
+      category,
       startDate,
       endDate,
       page = 1,
@@ -49,6 +50,7 @@ export default class JobRepository {
       if (startDate) query.createdAt.$gte = startDate;
       if (endDate) query.createdAt.$lte = endDate;
     }
+    if (category) query.category = category;
 
     const skip = (page - 1) * limit;
     const sortOptions: any = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
@@ -78,6 +80,43 @@ export default class JobRepository {
     ];
 
     const jobs = await Job.aggregate(aggregatePipeline);
+    const totalJobs = await Job.countDocuments(query);
+    const totalPages = Math.ceil(totalJobs / limit);
+
+    return {
+      data: jobs,
+      pagination: {
+        totalJobs,
+        totalPages,
+        currentPage: page,
+        pageSize: limit,
+      },
+    };
+  }
+
+  // Get all jobs with filters, pagination, sorting
+  async publicJobs(filters: IJobFilters = {}): Promise<IJobsDetails> {
+    const {
+      companyName,
+      title,
+      page = 1,
+      limit = 10,
+      sortBy = "createdAt",
+      sortOrder = "desc",
+    } = filters;
+
+    const query: any = { is_active: true };
+
+    if (companyName)
+      query.company_name = { $regex: companyName, $options: "i" };
+    if (title) query.title = { $regex: title, $options: "i" };
+    const skip = (page - 1) * limit;
+    const sortOptions: any = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+
+    const jobs = await Job.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limit);
     const totalJobs = await Job.countDocuments(query);
     const totalPages = Math.ceil(totalJobs / limit);
 
@@ -230,7 +269,7 @@ export default class JobRepository {
     page = 1,
     limit = 10,
     sortBy = "createdAt",
-    sortOrder: "desc" 
+    sortOrder: "desc"
   ): Promise<{
     data: IJobApplication[];
     pagination: {

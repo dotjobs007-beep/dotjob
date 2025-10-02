@@ -1,4 +1,5 @@
 import { IJob } from "../models/job.model";
+import { IUser } from "../models/user.model";
 
 export interface IJobFilters {
   minSalary?: number;
@@ -9,11 +10,20 @@ export interface IJobFilters {
   employmentType?: string;
   workArrangement?: string;
   startDate?: Date;
+  category?: string;
   endDate?: Date;
   page?: number;
   limit?: number;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
+}
+
+export interface IPublicService {
+  job?: IJobsDetails;
+  user?: IUser[];
+  page: number;
+  limit: number;
+  sortBy?: string;
 }
 
 export interface IJobsDetails {
