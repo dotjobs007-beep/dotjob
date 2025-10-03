@@ -39,7 +39,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "https://dotjob-i4y3.onrender.com",
+  "https://dotjob-client.vercel.app",
   "https://r71vnd5h-3000.uks1.devtunnels.ms",
   // Local LAN origins for testing from mobile devices on your Wi-Fi
   "http://192.168.2.100:3000",
